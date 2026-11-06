@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreUpdateAprendizRequest;
 use App\Models\Aprendiz;
 use Illuminate\Http\Request;
 
 class AprendizController extends Controller
 {
     /**
-     * Mostrar aprendices, con búsqueda y paginación.
+     * Mostrar el listado de aprendices.
      */
     public function index(Request $request)
     {
@@ -26,53 +27,26 @@ class AprendizController extends Controller
             ->paginate(10)
             ->withQueryString();
 
-        return view('aprendices.index', compact(
-            'aprendices',
-            'buscar'
-        ));
+        return view('aprendices.index', compact('aprendices', 'buscar'));
     }
 
     /**
-     * Mostrar el formulario de registro.
+     * Mostrar el formulario de registro. (¡ESTE ERA EL QUE FALTABA!)
      */
     public function create()
     {
-        return view('aprendices.create');
+        // Creamos una instancia vacía para que el formulario _form no falle
+        $aprendiz = new Aprendiz(); 
+        
+        return view('aprendices.create', compact('aprendiz'));
     }
 
     /**
      * Guardar un nuevo aprendiz.
      */
-    public function store(Request $request)
+    public function store(StoreUpdateAprendizRequest $request)
     {
-        $data = $request->validate([
-            'nombre' => [
-                'required',
-                'string',
-                'max:120'
-            ],
-
-            'documento' => [
-                'required',
-                'string',
-                'max:40',
-                'unique:aprendices,documento'
-            ],
-
-            'correo' => [
-                'required',
-                'email',
-                'max:120',
-                'unique:aprendices,correo'
-            ],
-
-            'ficha_id' => [
-                'nullable',
-                'integer'
-            ],
-        ]);
-
-        Aprendiz::create($data);
+        Aprendiz::create($request->validated());
 
         return redirect()
             ->route('aprendices.index')
@@ -80,25 +54,34 @@ class AprendizController extends Controller
     }
 
     /**
-     * Métodos que todavía no se implementan.
+     * Mostrar el formulario de edición.
      */
-    public function show(Aprendiz $aprendiz)
-    {
-        abort(404);
-    }
-
     public function edit(Aprendiz $aprendiz)
     {
-        abort(404);
+        return view('aprendices.edit', compact('aprendiz'));
     }
 
-    public function update(Request $request, Aprendiz $aprendiz)
+    /**
+     * Actualizar un aprendiz existente.
+     */
+    public function update(StoreUpdateAprendizRequest $request, Aprendiz $aprendiz)
     {
-        abort(404);
+        $aprendiz->update($request->validated());
+
+        return redirect()
+            ->route('aprendices.index')
+            ->with('ok', 'Aprendiz actualizado correctamente.');
     }
 
+    /**
+     * Eliminar un aprendiz.
+     */
     public function destroy(Aprendiz $aprendiz)
     {
-        abort(404);
+        $aprendiz->delete();
+
+        return redirect()
+            ->route('aprendices.index')
+            ->with('ok', 'Aprendiz eliminado correctamente.');
     }
 }
