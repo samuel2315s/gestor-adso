@@ -91,7 +91,7 @@
     <div class="d-flex flex-wrap gap-2 mt-4">
 
         <button type="submit" class="btn btn-primary btn-custom">
-            {{ $aprendiz->exists ? '💾 Actualizar aprendiz' : '💾 Guardar aprendiz' }}
+            {{ $aprendiz->exists ? ' Actualizar aprendiz' : ' Guardar aprendiz' }}
         </button>
 
         <a href="{{ route('aprendices.index') }}" class="btn btn-outline-secondary btn-custom d-flex align-items-center">

@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreUpdateAprendizRequest;
 use App\Models\Aprendiz;
 use Illuminate\Http\Request;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class AprendizController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Mostrar el listado de aprendices.
      */
@@ -76,12 +78,14 @@ class AprendizController extends Controller
     /**
      * Eliminar un aprendiz.
      */
-    public function destroy(Aprendiz $aprendiz)
-    {
-        $aprendiz->delete();
 
-        return redirect()
-            ->route('aprendices.index')
-            ->with('ok', 'Aprendiz eliminado correctamente.');
-    }
+       public function destroy(Aprendiz $aprendiz)
+{
+    $this->authorize('delete', $aprendiz);
+
+    $aprendiz->delete();
+
+    return redirect()->route('aprendices.index')
+        ->with('ok', 'Aprendiz eliminado');
 }
+    }

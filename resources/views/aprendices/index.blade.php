@@ -1,3 +1,4 @@
+
 @extends('layouts.app')
 
 @section('title', 'Aprendices')
@@ -11,9 +12,12 @@
             <p class="subtitle mb-0">Consulta y administra los aprendices registrados.</p>
         </div>
 
-        <a href="{{ route('aprendices.create') }}" class="btn btn-primary btn-custom">
-             Nuevo aprendiz
-        </a>
+        {{-- Solo administrador e instructor pueden crear --}}
+        @can('create', App\Models\Aprendiz::class)
+            <a href="{{ route('aprendices.create') }}" class="btn btn-primary btn-custom">
+                Nuevo aprendiz
+            </a>
+        @endcan
     </div>
 
     <div class="panel">
@@ -105,27 +109,40 @@
                             <td>
                                 <div class="d-flex justify-content-center gap-2">
 
-                                    {{-- Botón Editar --}}
-                                    <a
-                                        href="{{ route('aprendices.edit', $aprendiz) }}"
-                                        class="btn btn-warning btn-sm"
-                                    >
-                                         Editar
-                                    </a>
+                                    {{-- Solo administrador e instructor pueden editar --}}
+                                    @can('update', $aprendiz)
+                                        <a
+                                            href="{{ route('aprendices.edit', $aprendiz) }}"
+                                            class="btn btn-warning btn-sm"
+                                        >
+                                            Editar
+                                        </a>
+                                    @endcan
 
-                                    {{-- Botón Eliminar --}}
-                                    <form
-                                        action="{{ route('aprendices.destroy', $aprendiz) }}"
-                                        method="POST"
-                                        onsubmit="return confirm('¿Estás seguro de eliminar este aprendiz?')"
-                                    >
-                                        @csrf
-                                        @method('DELETE')
+                                    {{-- Solo administrador puede eliminar --}}
+                                    @can('delete', $aprendiz)
+                                        <form
+                                            action="{{ route('aprendices.destroy', $aprendiz) }}"
+                                            method="POST"
+                                            onsubmit="return confirm('¿Estás seguro de eliminar este aprendiz?')"
+                                        >
+                                            @csrf
+                                            @method('DELETE')
 
-                                        <button type="submit" class="btn btn-danger btn-sm">
-                                             Eliminar
-                                        </button>
-                                    </form>
+                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                Eliminar
+                                            </button>
+                                        </form>
+                                    @endcan
+
+                                    {{-- Mensaje para usuarios de solo lectura --}}
+                                    @cannot('update', $aprendiz)
+                                        @cannot('delete', $aprendiz)
+                                            <span class="text-secondary small">
+                                                Solo lectura
+                                            </span>
+                                        @endcannot
+                                    @endcannot
 
                                 </div>
                             </td>

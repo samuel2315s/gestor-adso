@@ -10,6 +10,11 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
+
+public function isRole(string $role): bool {
+    return $this->role === $role;
+}
+
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 

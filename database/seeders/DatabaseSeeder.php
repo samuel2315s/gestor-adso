@@ -6,10 +6,10 @@ use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    public function run(): void
-    {
-        $this->call([
-            AprendizSeeder::class,
-        ]);
-    }
+   public function run(): void {
+    $this->call([
+        UserSeeder::class,
+        AprendizSeeder::class,
+    ]);
+}
 }
